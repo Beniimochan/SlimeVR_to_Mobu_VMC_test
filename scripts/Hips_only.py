@@ -5,19 +5,19 @@ import math
 
 def quat_to_euler(x, y, z, w):
     """Quaternion → Euler(deg)"""
-    # roll (X軸回転)
+    # roll (X)
     sinr_cosp = 2 * (w * x + y * z)
     cosr_cosp = 1 - 2 * (x * x + y * y)
     roll = math.degrees(math.atan2(sinr_cosp, cosr_cosp))
 
-    # pitch (Y軸回転)
+    # pitch (Y)
     sinp = 2 * (w * y - z * x)
     if abs(sinp) >= 1:
         pitch = math.degrees(math.copysign(math.pi / 2, sinp))  # 90°
     else:
         pitch = math.degrees(math.asin(sinp))
 
-    # yaw (Z軸回転)
+    # yaw (Z)
     siny_cosp = 2 * (w * z + x * y)
     cosy_cosp = 1 - 2 * (y * y + z * z)
     yaw = math.degrees(math.atan2(siny_cosp, cosy_cosp))
@@ -27,7 +27,7 @@ def quat_to_euler(x, y, z, w):
 def handle_bone_pos(address, *args):
     try:
         bone_name = args[0]
-        if bone_name != "Hips":   # ✅ Rootだけテスト
+        if bone_name != "Hips":   # ✅ Rootonlytest
             return
 
         x, y, z = args[1:4]
@@ -38,7 +38,7 @@ def handle_bone_pos(address, *args):
             # === Translation ===
             pos = pyfbsdk.FBVector3d(
                 x * 100,
-                z * 100,   # Y/Z入れ替え
+                z * 100,   # Y/Zchange
                 y * 100
             )
             mobu_bone.SetVector(pos, pyfbsdk.FBModelTransformationType.kModelTranslation)
@@ -50,10 +50,10 @@ def handle_bone_pos(address, *args):
                 pyfbsdk.FBModelTransformationType.kModelRotation
             )
 
-            print(f"[DEBUG] Hips更新: Pos={pos}, Rot={euler}")
+            print(f"[DEBUG] Hips: Pos={pos}, Rot={euler}")
 
     except Exception as e:
-        print(f"[エラー] Root処理失敗: {e}")
+        print(f"[error] RootMissing: {e}")
 
 def start_vmc_osc_server():
     disp = dispatcher.Dispatcher()
@@ -63,7 +63,8 @@ def start_vmc_osc_server():
     port = 39539
     server = osc_server.ThreadingOSCUDPServer((ip, port), disp)
 
-    print(f"[VMC OSC] 受信開始: {ip}:{port}")
+    print(f"[VMC OSC] start: {ip}:{port}")
     server.serve_forever()
 
 threading.Thread(target=start_vmc_osc_server, daemon=True).start()
+
