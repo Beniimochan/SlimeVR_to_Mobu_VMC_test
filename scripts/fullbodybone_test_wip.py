@@ -51,7 +51,7 @@ def get_or_create_bone(vmc_name):
     bone_map[vmc_name] = bone
     return bone
 
-# def on_bone_pos(address, *args):
+ def on_bone_pos(address, *args):
 #    if  bone_name == "Neck":
 #        bone_name = "Head"  
 
@@ -93,4 +93,5 @@ def start_server():
 pyfbsdk.FBSystem().OnUIIdle.Add(_on_ui_idle)
 threading.Thread(target=start_server, daemon=True).start()
 print("[VMC] Start_VMC")
+
 
