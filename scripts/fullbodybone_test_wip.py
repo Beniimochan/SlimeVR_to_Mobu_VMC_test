@@ -12,7 +12,7 @@ _latest = {}
 _lock = threading.Lock()
 
 BONE_HIERARCHY = {
-    "root": None,
+  # "root": None,
     "Hips": "root",
     "Spine": "Hips",
     "Chest": "Spine",
@@ -51,9 +51,9 @@ def get_or_create_bone(vmc_name):
     bone_map[vmc_name] = bone
     return bone
 
-def on_bone_pos(address, *args):
-    if  bone_name == "Neck":
-        bone_name = "Head"   # 強制的に Head に置き換え
+# def on_bone_pos(address, *args):
+#    if  bone_name == "Neck":
+#        bone_name = "Head"  
 
     try:
         bone_name = args[0]
@@ -74,9 +74,9 @@ def _on_ui_idle(control, event):
 
     for bone_name, (x, y, z, qx, qy, qz, qw) in items:
         mobu_bone = get_or_create_bone(bone_name)
-        # 位置 (とりあえず SlimeVRのまま Y-up 前提)
+        # pos
         mobu_bone.Translation = pyfbsdk.FBVector3d(x*UNIT, y*UNIT, z*UNIT)
-        # 回転
+        # rot
         euler = pyfbsdk.FBVector3d()
         quat  = pyfbsdk.FBVector4d(qx, qy, qz, qw)
         pyfbsdk.FBQuaternionToRotation(euler, quat, pyfbsdk.FBRotationOrder.kFBXYZ)
@@ -89,7 +89,8 @@ def start_server():
     print(f"[VMC OSC] Listening on {VMC_IP}:{VMC_PORT}")
     server.serve_forever()
 
-# MotionBuilder の UI スレッドで更新
+# MotionBuilder  UI 
 pyfbsdk.FBSystem().OnUIIdle.Add(_on_ui_idle)
 threading.Thread(target=start_server, daemon=True).start()
-print("[VMC] Skeleton受信開始")
+print("[VMC] Start_VMC")
+
