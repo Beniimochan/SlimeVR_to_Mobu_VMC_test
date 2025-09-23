@@ -16,18 +16,18 @@ VMC_IP   = "127.0.0.1"
 VMC_PORT = 39539
 UNIT     = 100.0
 
-bone_map = {}     # VMC名→生成されたFBModelSkeleton
+bone_map = {}     # VMCname→FBModelSkeletonname
 _latest = {}
 _lock = threading.Lock()
 _linked = False   # 親子リンク済みかどうか
 
-# --- VMC名 → MoBu名 マッピング ---
+# --- VMCnemame → MoBuname mapping ---
 NAME_MAP = {
     "root": "root",
     "Hips": "Hips",
     "Spine": "Spine",
     "Chest": "Chest",
-    "UpperChest": "UpChest",  # 例: UpperChest を Chest2 にする
+    "UpperChest": "UpChest", 
     "Neck": "Neck",
     "Head": "Head",
 
@@ -50,7 +50,7 @@ NAME_MAP = {
     "RightFoot": "LeftFoot",
 }
 
-# --- 親子関係（VMCの元の名前で定義）---
+# --- （VMCbone）---
 BONE_HIERARCHY = {
     "root": None,
     "Hips": "root",
@@ -79,12 +79,12 @@ BONE_HIERARCHY = {
     "RightFoot": "RightLowerLeg"
 }
 
-# --- ボーン生成（ワールド座標で初期化） ---
+# --- buildbones ---
 def get_or_create_bone(vmc_name, init_pos=None):
     if vmc_name in bone_map:
         return bone_map[vmc_name]
 
-    mobu_name = NAME_MAP.get(vmc_name, vmc_name)  # マッピング適用
+    mobu_name = NAME_MAP.get(vmc_name, vmc_name)  # mapping
     bone = FBModelSkeleton(mobu_name)
     bone.Show = True
 
@@ -99,7 +99,7 @@ def get_or_create_bone(vmc_name, init_pos=None):
     print(f"[CREATE] {vmc_name} -> {mobu_name}")
     return bone
 
-# --- 親子リンク ---
+# --- linkbones ---
 def link_bones():
     global _linked
     if _linked:
@@ -112,7 +112,7 @@ def link_bones():
             print(f"[LINK] {NAME_MAP.get(vmc_name, vmc_name)} -> {NAME_MAP.get(parent_name, parent_name)}")
     _linked = True
 
-# --- OSC受信 ---
+# --- OSC ---
 def on_bone_pos(address, *args):
     try:
         bone_name = args[0]
@@ -123,7 +123,7 @@ def on_bone_pos(address, *args):
     with _lock:
         _latest[bone_name] = (x, y, z, qx, qy, qz, qw)
 
-# --- UI Idleで更新 ---
+# --- UI Idle ---
 def _on_ui_idle(control, event):
     with _lock:
         items = list(_latest.items())
@@ -136,19 +136,19 @@ def _on_ui_idle(control, event):
         if not mobu_bone:
             continue
 
-        # 位置
+        # pos
         mobu_bone.Translation = FBVector3d(x * UNIT, y * UNIT, z * UNIT)
 
-        # 回転
+        # rot
         euler = FBVector3d()
         quat  = FBVector4d(qx, qy, qz, qw)
         FBQuaternionToRotation(euler, quat, FBRotationOrder.kFBXYZ)
         mobu_bone.Rotation = euler
 
-    # 一度だけ親子リンク
+    # link firsttime
     link_bones()
 
-# --- サーバ起動 ---
+# --- server ---
 def start_server():
     disp = dispatcher.Dispatcher()
     disp.map("/VMC/Ext/Bone/Pos", on_bone_pos)
@@ -158,4 +158,5 @@ def start_server():
 
 FBSystem().OnUIIdle.Add(_on_ui_idle)
 threading.Thread(target=start_server, daemon=True).start()
-print("[VMC] Skeleton受信開始")
+print("[VMC] Skeleton_Linked!")
+
