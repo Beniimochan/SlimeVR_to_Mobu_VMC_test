@@ -5,4 +5,6 @@
 pip install python-osc
 ```
 
+# Please use slimeVR with Mirrortracking turned ON.
+
 <img width="1689" height="1017" alt="Image" src="https://github.com/user-attachments/assets/b5cf988b-3331-4df0-a780-a52ec3713e3b" />
