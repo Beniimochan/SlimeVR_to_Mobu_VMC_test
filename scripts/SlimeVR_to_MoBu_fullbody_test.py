@@ -19,7 +19,7 @@ UNIT     = 100.0
 bone_map = {}     # VMCname→FBModelSkeletonname
 _latest = {}
 _lock = threading.Lock()
-_linked = False   # 親子リンク済みかどうか
+_linked = False   
 
 # --- VMCnemame → MoBuname mapping ---
 NAME_MAP = {
@@ -159,4 +159,5 @@ def start_server():
 FBSystem().OnUIIdle.Add(_on_ui_idle)
 threading.Thread(target=start_server, daemon=True).start()
 print("[VMC] Skeleton_Linked!")
+
 
